@@ -5,24 +5,29 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEditor;
-using JetBrains.Annotations;
-using UnityEngine.UIElements;
+
 
 public class PlayerMovement : MonoBehaviour
 {
-    //public Transform play;
+    private bool incampfire = false;
+    public Healing healingScript;
+    public GameObject heallll;
+    public UnityEvent ClickingGround;
     public Transform camp;
     private Vector3 Clicked;
-    public float dis = 2f;
+    public float dis = 1f;
     public float t;
     public float speed = 5;
     public Coroutine moving;
+
 
     //public Button healBut;
     void Start()
     {
         Clicked = transform.position;
- 
+        ClickingGround.AddListener(clickGround);
+
+
     }
 
     // Update is called once per frame
@@ -30,68 +35,49 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            if (moving != null)
-            {
-                StopCoroutine(moving);
-            }
-            Clicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Clicked.z = transform.position.z;
-
-            moving = StartCoroutine(amMoving());
-
+            ClickingGround.Invoke();
         }
-
-
-
-
         Vector2 line = transform.position - camp.position;
         float dist = line.magnitude;
 
 
-        if (dist < dis)
+        if (dist < dis && !incampfire)
         {
-
-            //addEventListener();
-            Debug.Log("IM HERE");
-            //    play.z = transform.position.z;
-            //}
+            StopCoroutine(moving);
+            ClickingGround.RemoveAllListeners();
+            heallll.SetActive(true);
+            Button Comp = heallll.GetComponent<Button>();
+            Comp.onClick.AddListener(healingScript.starting);
+            Debug.Log("i am here");
+            incampfire = true;
         }
     }
-        IEnumerator amMoving()
+    IEnumerator amMoving()
+    {
+        while (transform.position != Clicked)
         {
-            while (transform.position != Clicked)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, Clicked, speed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, Clicked, speed * Time.deltaTime);
 
-                yield return null;
-            }
+            yield return null;
         }
-  
-      
-        public void clickGround()
+    }
+
+
+    public void clickGround()
     {
 
-    }
+        if (moving != null)
+        {
+            StopCoroutine(moving);
+        }
+        Clicked = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Clicked.z = transform.position.z;
 
-        //}
-
-        //    public void moves()
-        //{
-
-        //} 
-
-        //IEnumerator moving()
-        //{
-        //    while(madeIt == false)
-        //    {
-        //        transform.position = Vector3.MoveTowards(transform.position,Target, s * t);
-        //        yield return null;
-        //    }
-
-        //madeIt = true;
-
-        //}
+        moving = StartCoroutine(amMoving());
 
 
     }
+}
+
+
 

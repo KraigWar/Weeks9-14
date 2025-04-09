@@ -6,15 +6,13 @@ using UnityEngine.UI;
 
 public class Healing : MonoBehaviour
 {
-    SpriteRenderer sr;
     public float curHealth = 20;
     public Slider slide;
     public float t;
-    public bool isHealing;
     // Start is called before the first frame update
     void Start()
     {
-        isHealing = false;
+        
  
         slide.minValue = 0;
         slide.maxValue = 100;
@@ -24,18 +22,18 @@ public class Healing : MonoBehaviour
     public void starting()
     {
         StartCoroutine(Increase());
-        sr = GetComponent<SpriteRenderer>();
+        
 
     }
     IEnumerator Increase()
     {
         t = 0;
-        while (t < 1)
+        while (t < 10)
         {
             slide.value++;
             t += Time.deltaTime;
             yield return null;
         }
-        isHealing = false;
+        
     }
 }
